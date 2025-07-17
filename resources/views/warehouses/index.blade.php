@@ -1,69 +1,48 @@
 @extends('layouts.main')
 
-@section('title', 'Danh Mục - Cửa Hàng Thể Thao')
-
 @section('content')
 <div class="space-y-6">
     <div class="flex justify-between items-center">
         <div>
-            <h2 class="text-3xl font-bold tracking-tight">Danh Mục</h2>
-            <p class="text-muted-foreground">Tổ chức sản phẩm theo danh mục</p>
+            <h2 class="text-3xl font-bold tracking-tight">Quản Lý Kho Hàng</h2>
+            <p class="text-muted-foreground">Quản lý danh sách các kho hàng trong hệ thống</p>
         </div>
-        <a href="{{ route('categories.create') }}" class="bg-gray-900 hover:bg-gray-900 text-white px-4 py-2 rounded-lg flex items-center">
+        <a href="{{ route('warehouses.create') }}" id="addWarehouseBtn" class="bg-gray-900 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
-            Thêm Danh Mục
+            Thêm Kho Hàng
         </a>
     </div>
 
     <div class="bg-white rounded-lg shadow">
         <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold">Danh Mục Sản Phẩm</h3>
-            <p class="text-gray-600">Quản lý các danh mục để tổ chức sản phẩm</p>
+            <h3 class="text-lg font-semibold">Danh Sách Kho Hàng</h3>
+            <p class="text-gray-600">Danh sách tất cả các kho hàng trong hệ thống</p>
         </div>
         <div class="p-6">
-            @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span class="block sm:inline">{{ session('error') }}</span>
-                </div>
-            @endif
-
             <div class="flex items-center space-x-2 mb-4">
                 <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
-                <input type="text" id="searchInput" placeholder="Tìm kiếm danh mục..." class="max-w-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm kho hàng..."
+                    class="max-w-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên Danh Mục</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đường Dẫn</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng Thái</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày Tạo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên Kho</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Địa Chỉ</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao Tác</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200" id="categoriesTableBody">
-                        @forelse($categories as $category)
+                    <tbody class="bg-white divide-y divide-gray-200" id="warehousesTableBody">
+                        @foreach($warehouses as $warehouse)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $category->name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ $category->slug }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $category->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ $category->status === 'active' ? 'Hoạt động' : 'Ẩn' }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $category->created_at->format('d/m/Y') }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $warehouse->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ $warehouse->address }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                 <div class="relative inline-block text-left">
                                     <button class="dropdown-toggle bg-transparent hover:bg-gray-100 p-2 rounded-md">
@@ -72,17 +51,17 @@
                                         </svg>
                                     </button>
                                     <div class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                                        <a href="{{ route('categories.edit', $category->id) }}" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <a href="{{ route('warehouses.edit', $warehouse->id) }}" class="edit-btn block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                             <svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
-                                            Chỉnh Sửa
+                                            Chỉnh sửa
                                         </a>
-                                        <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="inline">
+                                        <form action="{{ route('warehouses.destroy', $warehouse->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                                                onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')">
+                                            <button type="submit" class="delete-btn block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                                                onclick="return confirm('Bạn có chắc chắn muốn xóa kho hàng này?')">
                                                 <svg class="h-4 w-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -93,18 +72,12 @@
                                 </div>
                             </td>
                         </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                Chưa có danh mục nào
-                            </td>
-                        </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
             <div class="mt-6">
-                {{ $categories->links() }}
+                {{ $warehouses->links() }}
             </div>
         </div>
     </div>
@@ -130,18 +103,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Search functionality
     const searchInput = document.getElementById('searchInput');
-    const tableBody = document.getElementById('categoriesTableBody');
+    const tableBody = document.getElementById('warehousesTableBody');
 
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
         const rows = tableBody.querySelectorAll('tr');
 
         rows.forEach(row => {
-            if (row.cells.length < 2) return; // Skip empty message row
             const name = row.cells[0].textContent.toLowerCase();
-            const slug = row.cells[1].textContent.toLowerCase();
+            const address = row.cells[1].textContent.toLowerCase();
 
-            if (name.includes(searchTerm) || slug.includes(searchTerm)) {
+            if (name.includes(searchTerm) || address.includes(searchTerm)) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
