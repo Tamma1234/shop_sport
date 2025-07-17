@@ -47,7 +47,15 @@
                 @enderror
             </div>
         </div>
-
+        <div>
+        <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+    <input type="text" name="slug" id="slug" value="{{ old('slug') }}"
+        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('slug') border-red-500 @enderror"
+        placeholder="e.g., barcelona-home-jersey-2024">
+    @error('slug')
+        <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+    @enderror
+        </div>
         <div>
             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
             <textarea name="description" id="description" rows="4"
@@ -219,5 +227,11 @@
     document.getElementById('gallery_images').addEventListener('change', function (e) {
         createImagePreview('gallery_images_preview', e.target.files, 'h-24 w-24 sm:h-28 sm:w-28');
     });
+    document.getElementById('name').addEventListener('input', function () {
+        const nameValue = this.value;
+        const slug = nameValue.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        document.getElementById('slug').value = slug;
+    });
+
 </script>
 @endpush

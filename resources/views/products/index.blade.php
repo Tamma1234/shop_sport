@@ -78,6 +78,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class="mt-6">
+                {{ $products->links() }}
+            </div>
         </div>
     </div>
 </div>
@@ -125,4 +128,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Edit/Delete functionality có thể bổ sung sau
 });
 </script>
+
+<style>
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 0.25rem;
+}
+.pagination .page-item {
+    display: inline-block;
+}
+.pagination .page-link {
+    color: #2563eb;
+    background: #f1f5f9;
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.375rem;
+    margin: 0 2px;
+    transition: background 0.2s, color 0.2s;
+    text-decoration: none;
+}
+.pagination .page-link:hover {
+    background: #2563eb;
+    color: #fff;
+}
+.pagination .active .page-link,
+.pagination .page-link.active {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+.pagination .disabled .page-link {
+    color: #9ca3af;
+    background: #e5e7eb;
+    cursor: not-allowed;
+}
+</style>
 @endsection 

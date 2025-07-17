@@ -9,6 +9,7 @@ class Product extends Model
 {
     /** @use HasFactory<\Database\Factories\ProductFactory> */
     use HasFactory;
+    protected $table = 'products';
 
     protected $fillable = [
         'name', 'slug', 'sku', 'description', 'category_id', 'tags', 'price', 'discount_price', 'stock', 'weight', 'dimensions', 'image', 'status'
