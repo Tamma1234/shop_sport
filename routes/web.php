@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SizeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('blog', BlogController::class);
     Route::resource('warehouses', \App\Http\Controllers\WarehouseController::class)
         ->middleware(['auth', 'verified']);
+    Route::resource('orders', OrderController::class);
+    Route::resource('sizes', SizeController::class);
 });
 
 require __DIR__.'/auth.php';

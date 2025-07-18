@@ -19,6 +19,8 @@ return new class extends Migration
             $table->text('address');
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'confirmed', 'shipped', 'cancelled'])->default('pending');
+            $table->string('purchase_link')->nullable(); // Cột link mua hàng
+            $table->date('purchase_date')->nullable();   // Cột ngày mua hàng
             $table->timestamps();
         });
     }
