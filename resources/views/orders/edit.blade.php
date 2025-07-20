@@ -30,9 +30,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">Tên Khách Hàng *</label>
-                <input type="text" name="customer_name" id="customer_name" value="{{ old('customer_name', $order->customer_name) }}"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('customer_name') border-red-500 @enderror"
-                    placeholder="VD: Nguyễn Văn A">
+                <input type="text" name="customer_name" value="{{ $order->customer->name }}" readonly class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('customer_name') border-red-500 @enderror">
                 @error('customer_name')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
@@ -40,9 +38,7 @@
 
             <div>
                 <label for="customer_phone" class="block text-sm font-medium text-gray-700 mb-1">Số Điện Thoại *</label>
-                <input type="text" name="customer_phone" id="customer_phone" value="{{ old('customer_phone', $order->customer_phone) }}"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('customer_phone') border-red-500 @enderror"
-                    placeholder="VD: 0912345678">
+                <input type="text" name="customer_phone" value="{{ $order->customer->phone }}" readonly class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('customer_phone') border-red-500 @enderror">
                 @error('customer_phone')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
@@ -51,9 +47,7 @@
 
         <div>
             <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email', $order->customer_email) }}"
-                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('customer_email') border-red-500 @enderror"
-                placeholder="VD: example@email.com">
+            <input type="email" name="customer_email" value="{{ $order->customer->email }}" readonly class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('customer_email') border-red-500 @enderror">
             @error('customer_email')
                 <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -63,7 +57,7 @@
             <label for="shipping_address" class="block text-sm font-medium text-gray-700 mb-1">Địa Chỉ Giao Hàng *</label>
             <textarea name="shipping_address" id="shipping_address" rows="3"
                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('shipping_address') border-red-500 @enderror"
-                placeholder="Nhập địa chỉ giao hàng chi tiết...">{{ old('shipping_address', $order->shipping_address) }}</textarea>
+                placeholder="Nhập địa chỉ giao hàng chi tiết...">{{ $order->customer->address }}</textarea>
             @error('shipping_address')
                 <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
             @enderror
@@ -104,7 +98,7 @@
                     </tr>
                 </thead>
                 <tbody id="order_items" class="bg-white divide-y divide-gray-200">
-                    @foreach($order->items as $item)
+                    @foreach($order->orderItems as $item)
                     <tr data-product-id="{{ $item->product_id }}">
                         <td class="px-6 py-4">{{ $item->product->name }}</td>
                         <td class="px-6 py-4">{{ number_format($item->price, 0, ',', '.') }}₫</td>
@@ -168,12 +162,20 @@
                 @enderror
             </div>
         </div>
+        <div>
+            <label for="deposit" class="block text-sm font-medium text-gray-700 mb-1">Tiền Cọc</label>
+            <input type="text" name="deposit" id="deposit" value="{{ old('deposit', $order->deposit) }}" class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('deposit') border-red-500 @enderror" placeholder="VD: 100.000">
+            <input type="hidden" name="deposit_value" id="deposit_value">
+            @error('deposit')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
 
         <div>
             <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Ghi Chú</label>
             <textarea name="notes" id="notes" rows="3"
                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Ghi chú thêm về đơn hàng...">{{ old('notes', $order->notes) }}</textarea>
+                placeholder="Ghi chú thêm về đơn hàng...">{{ $order->customer->note }}</textarea>
         </div>
 
         <div class="flex justify-between items-center">
@@ -293,6 +295,33 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('form').submit();
         }
     };
+});
+
+// Format số tiền cho deposit
+function formatDepositCurrency(input) {
+    let value = input.value.replace(/[^0-9]/g, '');
+    if (value.length > 0) {
+        value = parseInt(value).toLocaleString('vi-VN');
+    }
+    input.value = value;
+    document.getElementById('deposit_value').value = value.replace(/[^0-9]/g, '');
+}
+
+const depositInput = document.getElementById('deposit');
+depositInput.addEventListener('input', function() {
+    formatDepositCurrency(this);
+});
+if (depositInput.value) {
+    formatDepositCurrency(depositInput);
+}
+
+// Khi submit form, lấy giá trị thực cho deposit
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+    const depositValue = document.getElementById('deposit_value').value;
+    if (depositValue) {
+        depositInput.value = depositValue;
+    }
 });
 </script>
 @endpush

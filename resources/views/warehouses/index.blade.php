@@ -35,6 +35,7 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên Kho</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Địa Chỉ</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số Điện Thoại</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao Tác</th>
                         </tr>
                     </thead>
@@ -42,7 +43,8 @@
                         @foreach($warehouses as $warehouse)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $warehouse->name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ $warehouse->address }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ $warehouse->location }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ $warehouse->phone }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                 <div class="relative inline-block text-left">
                                     <button class="dropdown-toggle bg-transparent hover:bg-gray-100 p-2 rounded-md">

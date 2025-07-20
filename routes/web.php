@@ -3,7 +3,6 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\BlogController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SizeController;
 use Illuminate\Support\Facades\Route;
@@ -21,10 +20,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Resource routes for categories, products, and blog
+    // Resource routes for categories, products, and warehouses
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
-    Route::resource('blog', BlogController::class);
     Route::resource('warehouses', \App\Http\Controllers\WarehouseController::class)
         ->middleware(['auth', 'verified']);
     Route::resource('orders', OrderController::class);

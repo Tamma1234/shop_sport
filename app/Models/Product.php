@@ -12,11 +12,16 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'name', 'slug', 'sku', 'description', 'category_id', 'tags', 'price', 'discount_price', 'stock', 'weight', 'dimensions', 'image', 'status'
+        'name', 'slug', 'sku', 'description', 'category_id', 'warehouse_id', 'tags', 'price', 'discount_price', 'price_warehouse', 'stock', 'weight', 'dimensions', 'image', 'status'
     ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
     }
 }

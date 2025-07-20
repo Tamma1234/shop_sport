@@ -34,20 +34,24 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">STT</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã Đơn Hàng</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách Hàng</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng Tiền</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiền Cọc</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng Thái</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày Đặt</th>
                             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="ordersTableBody">
-                        @foreach($orders as $order)
+                        @foreach($orders as $index => $order)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap font-medium">#{{ $order->id }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ $order->user->name ?? '-' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium">{{ ($orders->currentPage() - 1) * $orders->perPage() + $index + 1 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $order->order_code }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">{{ $order->customer->name ?? '-' }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ number_format($order->total_amount, 0, ',', '.') }}₫</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ number_format($order->deposit, 0, ',', '.') }}₫</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full
                                     @if($order->status === 'pending') bg-yellow-100 text-yellow-800
@@ -121,8 +125,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const rows = tableBody.querySelectorAll('tr');
 
         rows.forEach(row => {
-            const orderId = row.cells[0].textContent.toLowerCase();
-            const customer = row.cells[1].textContent.toLowerCase();
+            const orderId = row.cells[1].textContent.toLowerCase(); // Changed from order->id to order->order_code
+            const customer = row.cells[2].textContent.toLowerCase(); // Changed from order->customer->name to order->customer->name
 
             if (orderId.includes(searchTerm) || customer.includes(searchTerm)) {
                 row.style.display = '';

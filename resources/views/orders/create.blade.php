@@ -47,7 +47,13 @@
                 @enderror
             </div>
         </div>
-
+        <div>
+            <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">Hình Thức Mua Hàng</label>
+            <input type="text" name="note" id="note" value="{{ old('note') }}"
+                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('note') border-red-500 @enderror"
+                placeholder="VD: example@email.com">
+          
+        </div>
         <div>
             <label for="customer_email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input type="email" name="customer_email" id="customer_email" value="{{ old('customer_email') }}"
@@ -67,24 +73,21 @@
                 <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
             @enderror
         </div>
-    </div>
 
-    {{-- Section: Sản phẩm --}}
-    <div class="bg-white rounded-lg shadow p-6 space-y-6">
-        <div>
-            <h2 class="text-xl font-semibold">Sản Phẩm <span class="text-sm text-gray-400">(Bắt buộc)</span></h2>
-            <p class="text-gray-500 text-sm">Chọn sản phẩm cho đơn hàng</p>
-        </div>
-
+        {{-- Sản phẩm --}}
         <div class="space-y-4">
             <div class="flex items-center gap-4">
-                <select id="product_select" class="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select id="product_select" name="product_id" class="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Chọn sản phẩm</option>
-                    @foreach($products as $product)
-                        <option value="{{ $product->id }}" data-price="{{ $product->price }}" data-stock="{{ $product->stock }}">
-                            {{ $product->name }} - {{ number_format($product->price, 0, ',', '.') }}₫
-                        </option>
-                    @endforeach
+                    @if($products->count() > 0)
+                        @foreach($products as $product)
+                            <option value="{{ $product->id }}" data-price="{{ $product->price }}" data-stock="{{ $product->stock }}">
+                                {{ $product->name }} - {{ number_format($product->price, 0, ',', '.') }}₫
+                            </option>
+                        @endforeach
+                    @else
+                        <option value="" disabled>Số lượng sản phẩm: {{ $products->count() }}</option>
+                    @endif
                 </select>
                 <button type="button" id="add_product" class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800">
                     Thêm
@@ -115,27 +118,11 @@
                 </table>
             </div>
         </div>
-    </div>
 
-    {{-- Section: Thanh toán & Ghi chú --}}
-    <div class="bg-white rounded-lg shadow p-6 space-y-6">
-        <div>
-            <h2 class="text-xl font-semibold">Thanh Toán & Ghi Chú</h2>
-        </div>
+        {{-- Hidden input để gửi dữ liệu sản phẩm --}}
+        <div id="products_inputs"></div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label for="payment_method" class="block text-sm font-medium text-gray-700 mb-1">Phương Thức Thanh Toán *</label>
-                <select name="payment_method" id="payment_method"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('payment_method') border-red-500 @enderror">
-                    <option value="cod" @selected(old('payment_method') == 'cod')>Thanh toán khi nhận hàng (COD)</option>
-                    <option value="bank_transfer" @selected(old('payment_method') == 'bank_transfer')>Chuyển khoản ngân hàng</option>
-                </select>
-                @error('payment_method')
-                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <div>
                 <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Trạng Thái *</label>
                 <select name="status" id="status"
@@ -146,6 +133,17 @@
                     <option value="cancelled" @selected(old('status') == 'cancelled')>Đã hủy</option>
                 </select>
                 @error('status')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label for="deposit" class="block text-sm font-medium text-gray-700 mb-1">Tiền Cọc</label>
+                <input type="text" name="deposit" id="deposit"
+                    value="{{ old('deposit') }}"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('deposit') border-red-500 @enderror"
+                    placeholder="VD: 100.000">
+                <input type="hidden" name="deposit_value" id="deposit_value">
+                @error('deposit')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -170,15 +168,40 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing order form...');
+    
     const productSelect = document.getElementById('product_select');
     const addProductBtn = document.getElementById('add_product');
     const orderItems = document.getElementById('order_items');
     const totalAmountElement = document.getElementById('total_amount');
+    
+    // Kiểm tra xem các element có tồn tại không
+    if (!productSelect) {
+        console.error('Product select not found!');
+        return;
+    }
+    if (!addProductBtn) {
+        console.error('Add product button not found!');
+        return;
+    }
+    if (!orderItems) {
+        console.error('Order items tbody not found!');
+        return;
+    }
+    if (!totalAmountElement) {
+        console.error('Total amount element not found!');
+        return;
+    }
+    
+    console.log('All elements found successfully');
+    console.log('Products available:', productSelect.options.length - 1); // Trừ option đầu tiên
+    
     let orderItemsData = [];
 
     function updateTotalAmount() {
         const total = orderItemsData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         totalAmountElement.textContent = formatCurrency(total) + '₫';
+        console.log('Total updated:', total);
     }
 
     function formatCurrency(amount) {
@@ -186,33 +209,55 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createOrderItemRow(product) {
-        const tr = document.createElement('tr');
-        tr.dataset.productId = product.id;
-        tr.innerHTML = `
-            <td class="px-6 py-4">${product.name}</td>
-            <td class="px-6 py-4">${formatCurrency(product.price)}₫</td>
-            <td class="px-6 py-4">
-                <input type="number" name="quantities[${product.id}]" value="${product.quantity}" min="1" max="${product.stock}"
-                    class="w-20 px-2 py-1 border rounded-md" onchange="updateQuantity(${product.id}, this.value)">
-            </td>
-            <td class="px-6 py-4">${formatCurrency(product.price * product.quantity)}₫</td>
-            <td class="px-6 py-4">
-                <button type="button" onclick="removeProduct(${product.id})" class="text-red-600 hover:text-red-800">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                    </svg>
-                </button>
-            </td>
-        `;
-        return tr;
-    }
+    console.log('Creating row for product:', product);
+    const tr = document.createElement('tr');
+    tr.dataset.productId = product.id;
+    tr.innerHTML = `
+        <td class="px-6 py-4">
+            ${product.name}
+            <input type="hidden" name="products[${product.id}][id]" value="${product.id}">
+        </td>
+        <td class="px-6 py-4">
+            ${formatCurrency(product.price)}₫
+            <input type="hidden" name="products[${product.id}][price]" value="${product.price}">
+        </td>
+        <td class="px-6 py-4">
+            <input type="number" name="products[${product.id}][quantity]" value="${product.quantity}" min="1" max="${product.stock}"
+                class="w-20 px-2 py-1 border rounded-md"
+                onchange="updateQuantity(${product.id}, this.value)">
+        </td>
+        <td class="px-6 py-4" id="subtotal-${product.id}">
+            ${formatCurrency(product.price * product.quantity)}₫
+        </td>
+        <td class="px-6 py-4">
+            <button type="button" onclick="removeProduct(${product.id})" class="text-red-600 hover:text-red-800">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </button>
+        </td>
+    `;
+    return tr;
+}
+
 
     addProductBtn.addEventListener('click', function() {
+        console.log('Add product button clicked');
         const selectedOption = productSelect.options[productSelect.selectedIndex];
-        if (!selectedOption.value) return;
+        console.log('Selected option:', selectedOption);
+        
+        if (!selectedOption || !selectedOption.value) {
+            console.log('No product selected');
+            alert('Vui lòng chọn một sản phẩm!');
+            return;
+        }
 
         const productId = parseInt(selectedOption.value);
+        console.log('Product ID:', productId);
+        
         if (orderItemsData.some(item => item.id === productId)) {
+            console.log('Product already exists in order');
             alert('Sản phẩm này đã được thêm vào đơn hàng!');
             return;
         }
@@ -224,25 +269,41 @@ document.addEventListener('DOMContentLoaded', function() {
             stock: parseInt(selectedOption.dataset.stock),
             quantity: 1
         };
+        
+        console.log('Product object created:', product);
 
         orderItemsData.push(product);
-        orderItems.appendChild(createOrderItemRow(product));
+        console.log('Product added to orderItemsData, total items:', orderItemsData.length);
+        
+        const newRow = createOrderItemRow(product);
+        console.log('New row created:', newRow);
+        console.log('Order items tbody:', orderItems);
+        
+        orderItems.appendChild(newRow);
+        console.log('Row added to table');
+        console.log('Current tbody children:', orderItems.children.length);
+        
         updateTotalAmount();
         productSelect.value = '';
+        console.log('Product select reset');
     });
 
     // Thêm các hàm này vào global scope để có thể gọi từ inline event handlers
     window.updateQuantity = function(productId, newQuantity) {
-        const item = orderItemsData.find(item => item.id === productId);
-        if (item) {
-            item.quantity = parseInt(newQuantity);
-            const row = orderItems.querySelector(`tr[data-product-id="${productId}"]`);
-            row.cells[3].textContent = formatCurrency(item.price * item.quantity) + '₫';
-            updateTotalAmount();
+    const item = orderItemsData.find(item => item.id === productId);
+    if (item) {
+        item.quantity = parseInt(newQuantity);
+        const subtotalCell = document.getElementById(`subtotal-${productId}`);
+        if (subtotalCell) {
+            subtotalCell.textContent = formatCurrency(item.price * item.quantity) + '₫';
         }
-    };
+        updateTotalAmount();
+    }
+};
+
 
     window.removeProduct = function(productId) {
+        console.log('Removing product', productId);
         orderItemsData = orderItemsData.filter(item => item.id !== productId);
         const row = orderItems.querySelector(`tr[data-product-id="${productId}"]`);
         if (row) {
@@ -250,6 +311,56 @@ document.addEventListener('DOMContentLoaded', function() {
             updateTotalAmount();
         }
     };
+    
+    console.log('Order form initialization completed');
+});
+
+// Thêm đoạn này để khi submit sẽ đóng gói dữ liệu sản phẩm đúng dạng
+function syncProductsInputs() {
+    const orderItems = window.orderItemsData || [];
+    const productsInputs = document.getElementById('products_inputs');
+    productsInputs.innerHTML = '';
+    orderItems.forEach((item, idx) => {
+        productsInputs.innerHTML += `<input type="hidden" name="products[${idx}][id]" value="${item.id}">`;
+        productsInputs.innerHTML += `<input type="hidden" name="products[${idx}][quantity]" value="${item.quantity}">`;
+    });
+}
+
+// Gọi lại hàm này mỗi khi thêm/xóa sản phẩm
+window.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            syncProductsInputs();
+        });
+    }
+});
+
+// Format số tiền cho deposit
+function formatDepositCurrency(input) {
+    let value = input.value.replace(/[^0-9]/g, '');
+    if (value.length > 0) {
+        value = parseInt(value).toLocaleString('vi-VN');
+    }
+    input.value = value;
+    document.getElementById('deposit_value').value = value.replace(/[^0-9]/g, '');
+}
+
+const depositInput = document.getElementById('deposit');
+depositInput.addEventListener('input', function() {
+    formatDepositCurrency(this);
+});
+if (depositInput.value) {
+    formatDepositCurrency(depositInput);
+}
+
+// Khi submit form, lấy giá trị thực cho deposit
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+    const depositValue = document.getElementById('deposit_value').value;
+    if (depositValue) {
+        depositInput.value = depositValue;
+    }
 });
 </script>
 @endpush

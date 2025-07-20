@@ -37,16 +37,7 @@
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
-
-            <div>
-                <label for="sku" class="block text-sm font-medium text-gray-700 mb-1">Mã Sản Phẩm *</label>
-                <input type="text" name="sku" id="sku" value="{{ old('sku', $product->sku ?? '') }}"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('sku') border-red-500 @enderror"
-                    placeholder="VD: BCN-HOME-2024">
-                @error('sku')
-                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+          
         </div>
         <div>
             <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">Đường Dẫn *</label>
@@ -69,22 +60,50 @@
             @enderror
         </div>
 
-        <div>
-            <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Danh Mục *</label>
-            <select name="category_id" id="category_id"
-                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('category_id') border-red-500 @enderror">
-                <option value="">Chọn danh mục</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id ?? '') == $category->id)>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('category_id')
-                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Danh Mục *</label>
+                <select name="category_id" id="category_id"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('category_id') border-red-500 @enderror">
+                    <option value="">Chọn danh mục</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" @selected(old('category_id', $product->category_id ?? '') == $category->id)>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category_id')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
+            <div>
+                <label for="warehouse_id" class="block text-sm font-medium text-gray-700 mb-1">Kho Hàng *</label>
+                <select name="warehouse_id" id="warehouse_id"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('warehouse_id') border-red-500 @enderror">
+                    <option value="">Chọn kho hàng</option>
+                    @foreach($warehouses as $warehouse)
+                        <option value="{{ $warehouse->id }}" @selected(old('warehouse_id', $product->warehouse_id ?? '') == $warehouse->id)>
+                            {{ $warehouse->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('warehouse_id')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+        <div>
+        <label for="price_warehouse" class="block text-sm font-medium text-gray-700 mb-1">Giá (₫) *</label>
+                <input type="number" step="1000" min="0" name="price_warehouse" id="price_warehouse" value="{{ old('price_warehouse', $product->price_warehouse ?? '') }}"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('price_warehouse') border-red-500 @enderror"
+                    placeholder="0">
+            <p class="text-xs text-gray-400 mt-1">Giá nhập kho</p>
+
+                @error('price_warehouse')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+        </div>
         <div>
             <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">Thẻ</label>
             <input type="text" name="tags" id="tags" value="{{ old('tags', $product->tags ?? '') }}"
@@ -148,17 +167,17 @@
         </div>
 
         <div>
-            <label for="main_image" class="block text-sm font-medium text-gray-700 mb-1">Ảnh Chính *</label>
-            <input type="file" name="main_image" id="main_image"
-                class="w-full px-3 py-2 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('main_image') border-red-500 @enderror"
+            <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Ảnh Chính *</label>
+            <input type="file" name="image" id="image"
+                class="w-full px-3 py-2 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('image') border-red-500 @enderror"
                 accept="image/*">
-            @error('main_image')
+            @error('image')
                 <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
             @enderror
-            <div id="main_image_preview" class="mt-3 flex flex-wrap gap-2">
-                @if($product->main_image ?? false)
+            <div id="image_preview" class="mt-3 flex flex-wrap gap-2">
+                @if($product->image ?? false)
                     <div class="relative overflow-hidden rounded-md border border-gray-300 shadow bg-white">
-                        <img src="{{ asset('storage/' . $product->main_image) }}" alt="Ảnh Chính" class="h-40 w-40 sm:h-48 sm:w-48 object-cover">
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="Ảnh Chính" class="h-40 w-40 sm:h-48 sm:w-48 object-cover">
                     </div>
                 @endif
             </div>
@@ -184,7 +203,7 @@
 
     {{-- Section: Trạng Thái --}}
     <div class="bg-white rounded-lg shadow p-6 space-y-4">
-        <div class="flex items-center justify-between">
+        <!-- <div class="flex items-center justify-between">
             <label for="status" class="text-sm font-medium text-gray-700">Trạng Thái Sản Phẩm</label>
             <input type="checkbox" name="status" id="status" value="active"
                 class="h-5 w-5 text-green-600 rounded focus:ring-2 focus:ring-green-500"
@@ -194,7 +213,7 @@
             {{ old('status', $product->status ?? 'active') == 'active'
                 ? 'Sản phẩm sẽ được hiển thị cho khách hàng'
                 : 'Sản phẩm sẽ bị ẩn khỏi cửa hàng' }}
-        </p>
+        </p> -->
         <button type="submit"
             class="w-full bg-gray-900 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200">
             Cập Nhật Sản Phẩm
@@ -235,8 +254,8 @@
         });
     }
 
-    document.getElementById('main_image').addEventListener('change', function (e) {
-        createImagePreview('main_image_preview', e.target.files, 'h-40 w-40 sm:h-48 sm:w-48');
+    document.getElementById('image').addEventListener('change', function (e) {
+        createImagePreview('image_preview', e.target.files, 'h-40 w-40 sm:h-48 sm:w-48');
     });
 
     document.getElementById('gallery_images').addEventListener('change', function (e) {

@@ -32,10 +32,10 @@ class WarehouseController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'location' => 'required|string|max:255',
+            'phone' => 'required|string|max:255'
         ]);
-
+        
         $validated['slug'] = Str::slug($validated['name'], '-');
         $warehouse = Warehouse::create($validated);
 
@@ -65,10 +65,11 @@ class WarehouseController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'location' => 'required|string|max:255',
+            'phone' => 'required|string|max:255'
         ]);
 
         $warehouse = Warehouse::findOrFail($id);

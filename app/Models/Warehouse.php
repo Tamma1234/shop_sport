@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Warehouse extends Model
 {
-    protected $fillable = ['name', 'location'];
+    protected $fillable = ['name', 'location', 'phone'];
 
     public function products()
     {

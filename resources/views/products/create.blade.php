@@ -58,7 +58,7 @@
         </div>
         <div>
             <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Mô Tả *</label>
-            <textarea name="description" id="description" rows="4"
+            <textarea name="description" id="product_description" rows="4"
                 class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('description') border-red-500 @enderror"
                 placeholder="Mô tả chi tiết về sản phẩm...">{{ old('description') }}</textarea>
             @error('description')
@@ -68,22 +68,40 @@
             @enderror
         </div>
 
-        <div>
-            <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Danh Mục *</label>
-            <select name="category_id" id="category_id"
-                class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('category_id') border-red-500 @enderror">
-                <option value="">Chọn danh mục</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
-            @error('category_id')
-                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Danh Mục *</label>
+                <select name="category_id" id="category_id"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('category_id') border-red-500 @enderror">
+                    <option value="">Chọn danh mục</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" @selected(old('category_id') == $category->id)>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category_id')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
+            <div>
+                <label for="warehouse_id" class="block text-sm font-medium text-gray-700 mb-1">Kho Hàng *</label>
+                <select name="warehouse_id" id="warehouse_id"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('warehouse_id') border-red-500 @enderror">
+                    <option value="">Chọn kho hàng</option>
+                    @foreach($warehouses as $warehouse)
+                        <option value="{{ $warehouse->id }}" @selected(old('warehouse_id') == $warehouse->id)>
+                            {{ $warehouse->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('warehouse_id')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+      
         <div>
             <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">Thẻ</label>
             <input type="text" name="tags" id="tags" value="{{ old('tags') }}"
@@ -100,9 +118,9 @@
             <p class="text-gray-500 text-sm">Quản lý giá và số lượng sản phẩm</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Giá (₫) *</label>
+                <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Giá Bán (₫) *</label>
                 <input type="text" name="price" id="price" value="{{ old('price') }}"
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('price') border-red-500 @enderror"
                     placeholder="VD: 180.000">
@@ -113,11 +131,23 @@
             </div>
 
             <div>
-                <label for="discount" class="block text-sm font-medium text-gray-700 mb-1">Giảm Giá (%)</label>
-                <input type="number" min="0" max="100" name="discount" id="discount" value="{{ old('discount', 0) }}"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('discount') border-red-500 @enderror"
+                <label for="price_warehouse" class="block text-sm font-medium text-gray-700 mb-1">Giá Nhập Kho (₫)</label>
+                <input type="number" step="1000" min="0" name="price_warehouse" id="price_warehouse" value="{{ old('price_warehouse') }}"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('price_warehouse') border-red-500 @enderror"
+                    placeholder="VD: 150.000">
+                @error('price_warehouse')
+                    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="discount_price" class="block text-sm font-medium text-gray-700 mb-1">Giảm Giá (%)</label>
+                <input type="number" min="0" max="100" name="discount_price" id="discount_price" value="{{ old('discount_price', 0) }}"
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('discount_price') border-red-500 @enderror"
                     placeholder="0">
-                @error('discount')
+                @error('discount_price')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -133,10 +163,10 @@
             </div>
         </div>
 
-        @if(old('price') && old('discount', 0) > 0)
+        @if(old('price') && old('discount_price', 0) > 0)
             <div class="bg-green-100 border border-green-300 rounded p-3 text-sm text-green-700 mt-2">
                 Giá sau khi giảm:
-                <strong>{{ number_format(old('price') - (old('price') * old('discount') / 100), 0, ',', '.') }}₫</strong>
+                <strong>{{ number_format(old('price') - (old('price') * old('discount_price') / 100), 0, ',', '.') }}₫</strong>
             </div>
         @endif
     </div>
@@ -148,14 +178,14 @@
         </div>
 
         <div>
-            <label for="main_image" class="block text-sm font-medium text-gray-700 mb-1">Ảnh Chính *</label>
-            <input type="file" name="main_image" id="main_image"
-                class="w-full px-3 py-2 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('main_image') border-red-500 @enderror"
+            <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Ảnh Chính *</label>
+            <input type="file" name="image" id="image"
+                class="w-full px-3 py-2 border-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('image') border-red-500 @enderror"
                 accept="image/*">
-            @error('main_image')
+            @error('image')
                 <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
             @enderror
-            <div id="main_image_preview" class="mt-3 flex flex-wrap gap-2"></div>
+            <div id="image_preview" class="mt-3 flex flex-wrap gap-2"></div>
         </div>
 
         <div>
@@ -170,7 +200,7 @@
 
     {{-- Section: Trạng Thái --}}
     <div class="bg-white rounded-lg shadow p-6 space-y-4">
-        <div class="flex items-center justify-between">
+        <!-- <div class="flex items-center justify-between">
             <label for="status" class="text-sm font-medium text-gray-700">Trạng Thái Sản Phẩm</label>
             <input type="checkbox" name="status" id="status" value="active"
                 class="h-5 w-5 text-green-600 rounded focus:ring-2 focus:ring-green-500"
@@ -180,7 +210,7 @@
             {{ old('status', 'active') == 'active'
                 ? 'Sản phẩm sẽ được hiển thị cho khách hàng'
                 : 'Sản phẩm sẽ bị ẩn khỏi cửa hàng' }}
-        </p>
+        </p> -->
         <button type="submit"
             class="w-full bg-gray-900 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200">
             Lưu Sản Phẩm
@@ -192,6 +222,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
     function createImagePreview(containerId, files, imageSizeClasses = '') {
         const previewContainer = document.getElementById(containerId);
@@ -221,8 +252,8 @@
         });
     }
 
-    document.getElementById('main_image').addEventListener('change', function (e) {
-        createImagePreview('main_image_preview', e.target.files, 'h-40 w-40 sm:h-48 sm:w-48');
+    document.getElementById('image').addEventListener('change', function (e) {
+        createImagePreview('image_preview', e.target.files, 'h-40 w-40 sm:h-48 sm:w-48');
     });
 
     document.getElementById('gallery_images').addEventListener('change', function (e) {
@@ -269,5 +300,12 @@
             priceInput.value = priceValue;
         }
     });
+
+    // Khởi tạo CKEditor cho textarea mô tả sản phẩm
+    ClassicEditor
+        .create(document.querySelector('#product_description'))
+        .catch(error => {
+            console.error(error);
+        });
 </script>
 @endpush

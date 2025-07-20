@@ -51,7 +51,7 @@
                 <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Mô Tả</label>
                 <textarea name="description" id="description" rows="4"
                     class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 @error('description') border-red-500 @enderror"
-                    placeholder="Mô tả về danh mục...">{{ old('description') }}</textarea>
+                    placeholder="Mô tả chi tiết về sản phẩm...">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
                 @enderror
@@ -81,6 +81,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
     document.getElementById('name').addEventListener('input', function () {
         const nameValue = this.value;
@@ -91,5 +92,44 @@
             .replace(/(^-|-$)/g, '');
         document.getElementById('slug').value = slug;
     });
+
+    // Khởi tạo CKEditor với plugin Base64 để preview ảnh khi chọn
+    ClassicEditor
+        .create(document.querySelector('#description'), {
+            // Cho phép dán/nhúng ảnh bằng base64
+            removePlugins: ['CKFinderUploadAdapter', 'SimpleUploadAdapter', 'CloudServices'], // loại bỏ adapter upload
+            extraPlugins: [MyCustomUploadAdapterPlugin]
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+    // Plugin xử lý ảnh base64 (ảnh sẽ preview ngay trong trình soạn thảo)
+    function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+            return new Base64UploadAdapter(loader);
+        };
+    }
+
+    class Base64UploadAdapter {
+        constructor(loader) {
+            this.loader = loader;
+        }
+
+        upload() {
+            return this.loader.file
+                .then(file => new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve({ default: reader.result });
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                }));
+        }
+
+        abort() {
+            // Không cần thiết
+        }
+    }
 </script>
 @endpush
+

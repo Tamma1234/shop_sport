@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete();
-            $table->integer('quantity');
-            $table->decimal('price_each', 10, 2);
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('restrict');
+            $table->integer('quantity')->default(1);
+            $table->decimal('price', 12, 2); // giá tại thời điểm mua
+            $table->decimal('total', 12, 2); // price * quantity
             $table->timestamps();
         });
     }

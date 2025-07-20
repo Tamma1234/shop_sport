@@ -14,9 +14,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::with(['user', 'items.product'])
-            ->latest()
-            ->paginate(10);
+        $orders = Order::with(['orderItems.product', 'customer'])
+        ->latest()
+        ->paginate(10);
 
         return view('orders.index', compact('orders'));
     }
@@ -36,54 +36,67 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
             'customer_email' => 'nullable|email|max:255',
             'shipping_address' => 'required|string',
-            'payment_method' => 'required|in:cod,bank_transfer',
             'status' => 'required|in:pending,processing,completed,cancelled',
-            'quantities' => 'required|array',
-            'quantities.*' => 'required|integer|min:1'
+            'products' => 'required|array',
+            'products.*.id' => 'required|integer|exists:products,id',
+            'products.*.quantity' => 'required|integer|min:1',
         ]);
 
         try {
             DB::beginTransaction();
 
-            // Create order
-            $order = Order::create([
-                'customer_name' => $request->customer_name,
-                'customer_phone' => $request->customer_phone,
-                'customer_email' => $request->customer_email,
-                'shipping_address' => $request->shipping_address,
-                'payment_method' => $request->payment_method,
+            // Tìm hoặc tạo khách hàng
+            $customer = \App\Models\Customer::firstOrCreate(
+                [
+                    'phone' => $request->customer_phone,
+                ],
+                [
+                    'name' => $request->customer_name,
+                    'email' => $request->customer_email,
+                    'address' => $request->shipping_address,
+                    'note' => $request->notes,
+                ]
+            );
+
+            // Tạo đơn hàng
+            $order = \App\Models\Order::create([
+                'customer_id' => $customer->id,
+                'order_code' => \App\Models\Order::generateOrderCode(),
                 'status' => $request->status,
-                'notes' => $request->notes,
-                'user_id' => auth()->id()
+                'total_amount' => 0, // sẽ cập nhật sau
+                'note' => $request->notes,
             ]);
 
-            // Add order items
+            // Thêm order items
             $total_amount = 0;
-            foreach ($request->quantities as $product_id => $quantity) {
-                $product = Product::findOrFail($product_id);
+            foreach ($request->products as $item) {
+                $product = Product::findOrFail($item['id']);
+                $quantity = $item['quantity'];
 
                 if ($product->stock < $quantity) {
                     throw new \Exception("Sản phẩm {$product->name} không đủ số lượng trong kho.");
                 }
 
-                $order->items()->create([
-                    'product_id' => $product_id,
+                $order->orderItems()->create([
+                    'product_id' => $product->id,
                     'quantity' => $quantity,
-                    'price' => $product->price
+                    'price' => $product->price,
+                    'total' => $product->price * $quantity,
                 ]);
 
-                // Update stock
+                // Trừ kho
                 $product->decrement('stock', $quantity);
 
                 $total_amount += $product->price * $quantity;
             }
 
-            // Update total amount
+            // Cập nhật tổng tiền
             $order->update(['total_amount' => $total_amount]);
 
             DB::commit();
@@ -105,11 +118,9 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        $order->load(['items.product']);
-        $products = Product::where('status', 'active')
-            ->where('stock', '>', 0)
+        $order->load(['orderItems.product']);
+        $products = Product::where('stock', '>', 0)
             ->get();
-
         return view('orders.edit', compact('order', 'products'));
     }
 
@@ -140,18 +151,19 @@ class OrderController extends Controller
                 'shipping_address' => $request->shipping_address,
                 'payment_method' => $request->payment_method,
                 'status' => $request->status,
-                'notes' => $request->notes
+                'notes' => $request->notes,
+                'deposit' => $request->deposit,
             ]);
 
             // Restore stock for removed items
-            foreach ($order->items as $item) {
+            foreach ($order->orderItems as $item) {
                 if (!isset($request->quantities[$item->product_id])) {
                     $item->product->increment('stock', $item->quantity);
                 }
             }
 
             // Remove all current items
-            $order->items()->delete();
+            $order->orderItems()->delete();
 
             // Add new items
             $total_amount = 0;
@@ -162,7 +174,7 @@ class OrderController extends Controller
                     throw new \Exception("Sản phẩm {$product->name} không đủ số lượng trong kho.");
                 }
 
-                $order->items()->create([
+                $order->orderItems()->create([
                     'product_id' => $product_id,
                     'quantity' => $quantity,
                     'price' => $product->price
@@ -200,12 +212,12 @@ class OrderController extends Controller
             DB::beginTransaction();
 
             // Restore product stock
-            foreach ($order->items as $item) {
+            foreach ($order->orderItems as $item) {
                 $item->product->increment('stock', $item->quantity);
             }
 
             // Delete order and its items
-            $order->items()->delete();
+            $order->orderItems()->delete();
             $order->delete();
 
             DB::commit();
