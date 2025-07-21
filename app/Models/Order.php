@@ -21,6 +21,7 @@ class Order extends Model
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'deposit' => 'decimal:2',
     ];
 
     /**
@@ -47,6 +48,14 @@ class Order extends Model
         return $this->belongsToMany(Product::class, 'order_items')
                     ->withPivot('quantity', 'price', 'total')
                     ->withTimestamps();
+    }
+
+    /**
+     * Get the printing styles for this order.
+     */
+    public function printingStyles()
+    {
+        return $this->belongsToMany(\App\Models\PrintingStyle::class, 'order_printing_style');
     }
 
     /**

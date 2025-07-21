@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Printing;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -99,6 +100,9 @@ class OrderController extends Controller
             // Cập nhật tổng tiền
             $order->update(['total_amount' => $total_amount]);
 
+            // Lưu các kiểu in (kể cả khi không chọn gì)
+            $order->printingStyles()->sync($request->input('printing_style_ids', []));
+
             DB::commit();
 
             return redirect()
@@ -121,7 +125,9 @@ class OrderController extends Controller
         $order->load(['orderItems.product']);
         $products = Product::where('stock', '>', 0)
             ->get();
-        return view('orders.edit', compact('order', 'products'));
+        $printings = Printing::with('styles')->get();
+
+        return view('orders.edit', compact('order', 'products', 'printings'));
     }
 
     /**
@@ -129,6 +135,7 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
+        
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_phone' => 'required|string|max:20',
@@ -152,7 +159,7 @@ class OrderController extends Controller
                 'payment_method' => $request->payment_method,
                 'status' => $request->status,
                 'notes' => $request->notes,
-                'deposit' => $request->deposit,
+                'deposit' => $request->deposit ? str_replace(['.', ','], '', $request->deposit) : 0,
             ]);
 
             // Restore stock for removed items
@@ -188,6 +195,9 @@ class OrderController extends Controller
 
             // Update total amount
             $order->update(['total_amount' => $total_amount]);
+
+            // Lưu các kiểu in (kể cả khi không chọn gì)
+            $order->printingStyles()->sync($request->input('printing_style_ids', []));
 
             DB::commit();
 

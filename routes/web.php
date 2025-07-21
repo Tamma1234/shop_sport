@@ -5,6 +5,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SizeController;
+use App\Http\Controllers\PrintingController;
+use App\Http\Controllers\PrintingStyleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,6 +29,9 @@ Route::middleware('auth')->group(function () {
         ->middleware(['auth', 'verified']);
     Route::resource('orders', OrderController::class);
     Route::resource('sizes', SizeController::class);
+    Route::resource('invoice-statistics', \App\Http\Controllers\InvoiceStatisticsController::class);
+    Route::resource('printings', PrintingController::class);
+    Route::resource('printing-styles', PrintingStyleController::class);
 });
 
 require __DIR__.'/auth.php';
