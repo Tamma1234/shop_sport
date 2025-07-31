@@ -15,6 +15,11 @@ class Product extends Model
         'name', 'slug', 'sku', 'description', 'category_id', 'warehouse_id', 'tags', 'price', 'discount_price', 'price_warehouse', 'stock', 'weight', 'dimensions', 'image', 'status'
     ];
 
+    protected $casts = [
+        'tags' => 'array',
+        'status' => 'string'
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);

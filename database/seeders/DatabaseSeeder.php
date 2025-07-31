@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ProductSeeder::class,
             CustomerSeeder::class,
+            GiftSeeder::class,
             OrderSeeder::class,
             OrderItemSeeder::class,
         ]);

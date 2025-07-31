@@ -59,6 +59,16 @@ class Order extends Model
     }
 
     /**
+     * Get the gifts for this order.
+     */
+    public function gifts()
+    {
+        return $this->belongsToMany(Gift::class, 'order_gifts')
+                    ->withPivot('quantity', 'price')
+                    ->withTimestamps();
+    }
+
+    /**
      * Generate a unique order code.
      */
     public static function generateOrderCode()

@@ -40,6 +40,16 @@ class OrderItem extends Model
     }
 
     /**
+     * Get the printing styles for this order item.
+     */
+    public function printingStyles()
+    {
+        return $this->belongsToMany(\App\Models\PrintingStyle::class, 'order_item_printing_style')
+            ->withPivot('quantity')
+            ->withTimestamps();
+    }
+
+    /**
      * Calculate total for this order item.
      */
     public function calculateTotal()
