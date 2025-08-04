@@ -1,3 +1,18 @@
-<footer class="bg-white mt-8 py-4 shadow text-center text-gray-500">
-    &copy; {{ date('Y') }} ClientZone. All rights reserved.
-</footer> 
+   <!-- Footer -->
+   <footer class="tf-footer">
+            <div class="container d-flex">
+                <span class="br-line"></span>
+            </div>
+            <div class="footer-body">
+                <div class="container">
+                    <div class="row">
+                        @include('client.components.footer.contact-info')
+                        @include('client.components.footer.shopping-links')
+                        @include('client.components.footer.information-links')
+                        @include('client.components.footer.newsletter')
+                    </div>
+                </div>
+            </div>
+      
+        </footer>
+        <!-- /Footer -->

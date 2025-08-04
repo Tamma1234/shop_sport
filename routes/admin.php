@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\WarehouseController;
 use App\Http\Controllers\Admin\InvoiceStatisticsController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\GiftController;
+use App\Http\Controllers\Admin\ContactInfoController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -29,4 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('printing-styles', PrintingStyleController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('gifts', GiftController::class);
+    
+    // Contact Info routes
+    Route::get('/contact-info/edit', [ContactInfoController::class, 'edit'])->name('contact-info.edit');
+    Route::put('/contact-info/update', [ContactInfoController::class, 'update'])->name('contact-info.update');
 }); 

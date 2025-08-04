@@ -46,7 +46,7 @@ class HomeController
             ->orderBy('discount_price', 'desc')
             ->limit(8)
             ->get();
-        
+
         return view('client.home.home', compact('products', 'categories', 'topCategories', 'newArrivals', 'bestSellers', 'onSale'));
     }
 }

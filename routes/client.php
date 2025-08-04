@@ -5,6 +5,7 @@ use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ProductController;
 use App\Http\Controllers\Client\AboutController;
 use App\Http\Controllers\Client\BlogController;
+use App\Http\Controllers\Client\NewsletterController;
 
 // Trang chủ
 Route::get('/', [HomeController::class, 'index'])->name('client.home');
@@ -22,4 +23,7 @@ Route::get('/about', [AboutController::class, 'index'])->name('client.about');
 Route::get('/blog', [BlogController::class, 'index'])->name('client.blog');
 Route::get('/blog/grid', [BlogController::class, 'grid'])->name('client.blog.grid');
 Route::get('/blog/list', [BlogController::class, 'list'])->name('client.blog.list');
-Route::get('/blog/{slug}', [BlogController::class, 'detail'])->name('client.blog.detail'); 
+Route::get('/blog/{slug}', [BlogController::class, 'detail'])->name('client.blog.detail');
+
+// Newsletter
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])->name('newsletter.subscribe'); 

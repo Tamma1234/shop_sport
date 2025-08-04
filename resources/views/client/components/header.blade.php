@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-xl-4 col-md-4 col-6">
                     <a href="index.html" class="logo-site justify-content-center">
-                        <img src="{{asset('build/assets/images/logo-tamjr.png')}}" alt="Logo">
+                        <img src="{{asset('build/assets/images/logo-tamjr-sport.png')}}" alt="Logo">
                     </a>
                 </div>
                 <div class="col-xl-4 col-md-4 col-3">

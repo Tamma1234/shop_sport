@@ -1,0 +1,106 @@
+/* Fanpage Preview Styles */
+.fanpage-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.fanpage-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.fanpage-card {
+    border: 1px solid #e1e8ed;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.fanpage-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.fanpage-cover {
+    height: 120px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #1877f2 0%, #0d6efd 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fanpage-cover-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.fanpage-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.fanpage-info {
+    border-top: none;
+}
+
+.fanpage-avatar img {
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fanpage-avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #1877f2 0%, #0d6efd 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fanpage-details h6 {
+    color: #1c1e21;
+    font-size: 14px;
+}
+
+.fanpage-details small {
+    font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .fanpage-cover {
+        height: 100px;
+    }
+    
+    .fanpage-info {
+        padding: 12px !important;
+    }
+    
+    .fanpage-avatar img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .fanpage-avatar-placeholder {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .fanpage-details h6 {
+        font-size: 13px;
+    }
+    
+    .fanpage-details small {
+        font-size: 11px;
+    }
+} 

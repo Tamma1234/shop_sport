@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="{{ asset('build/assets/css/swiper-bundle.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/assets/css/animate.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('build/assets/css/styles.css') }}">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('css/fanpage-preview.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/menu-custom.css') }}">
     <!-- Favicon and Touch Icons  -->
     <link rel="shortcut icon" href="{{ asset('build/assets/images/logo/favicon.svg') }}">
     <link rel="apple-touch-icon-precomposed" href="{{ asset('build/assets/images/logo/favicon.svg') }}"> 
