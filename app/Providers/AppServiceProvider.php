@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Setting;
+use App\Helpers\ImageHelper;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +27,8 @@ class AppServiceProvider extends ServiceProvider
             $settings = Setting::pluck('value', 'key')->toArray();
             $view->with('settings', $settings);
         });
+        
+        // Share ImageHelper to all views
+        View::share('ImageHelper', ImageHelper::class);
     }
 }

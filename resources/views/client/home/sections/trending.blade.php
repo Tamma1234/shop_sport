@@ -1,4 +1,5 @@
     <!-- Trending -->
+    <link rel="stylesheet" href="{{ asset('css/product-image-fix.css') }}">
     <section class="flat-spacing flat-animate-tab">
             <div class="container">
                 <div class="sect-title wow fadeInUp">
@@ -46,24 +47,7 @@
                                                 @endif
                                             </a>
                                             <ul class="product-action_list">
-                                                <li>
-                                                    <a href="#shoppingCart" data-bs-toggle="offcanvas" class="hover-tooltip tooltip-left box-icon">
-                                                        <span class="icon icon-shopping-cart-simple"></span>
-                                                        <span class="tooltip">Add to cart</span>
-                                                    </a>
-                                                </li>
-                                                <li class="wishlist">
-                                                    <a href="javascript:void(0);" class="hover-tooltip tooltip-left box-icon">
-                                                        <span class="icon icon-heart"></span>
-                                                        <span class="tooltip">Add to Wishlist</span>
-                                                    </a>
-                                                </li>
-                                                <li class="compare">
-                                                    <a href="#compare" data-bs-toggle="offcanvas" class="hover-tooltip tooltip-left box-icon ">
-                                                        <span class="icon icon-compare"></span>
-                                                        <span class="tooltip">Compare</span>
-                                                    </a>
-                                                </li>
+                                                
                                                 <li>
                                                     <a href="#quickView" data-bs-toggle="modal" class="hover-tooltip tooltip-left box-icon">
                                                         <span class="icon icon-view"></span>
@@ -97,24 +81,7 @@
                                                     data-src="{{ asset('images/products/skincare/product-1.jpg') }}" alt="Product">
                                             </a>
                                             <ul class="product-action_list">
-                                                <li>
-                                                    <a href="#shoppingCart" data-bs-toggle="offcanvas" class="hover-tooltip tooltip-left box-icon">
-                                                        <span class="icon icon-shopping-cart-simple"></span>
-                                                        <span class="tooltip">Add to cart</span>
-                                                    </a>
-                                                </li>
-                                                <li class="wishlist">
-                                                    <a href="javascript:void(0);" class="hover-tooltip tooltip-left box-icon">
-                                                        <span class="icon icon-heart"></span>
-                                                        <span class="tooltip">Add to Wishlist</span>
-                                                    </a>
-                                                </li>
-                                                <li class="compare">
-                                                    <a href="#compare" data-bs-toggle="offcanvas" class="hover-tooltip tooltip-left box-icon ">
-                                                        <span class="icon icon-compare"></span>
-                                                        <span class="tooltip">Compare</span>
-                                                    </a>
-                                                </li>
+                                              
                                                 <li>
                                                     <a href="#quickView" data-bs-toggle="modal" class="hover-tooltip tooltip-left box-icon">
                                                         <span class="icon icon-view"></span>

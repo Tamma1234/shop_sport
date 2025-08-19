@@ -8,18 +8,18 @@
                     </a>
                 </div>
                 <div class="col-xl-4 d-none d-xl-block">
-                    <div class="box-support-online">
-                        <i class="icon icon-phone"></i>
-                        <span class="br-line type-vertical"></span>
-                        <div class="sp-wrap">
-                            <span class="text-small">Online support</span>
-                            <a href="tel:4055550128" class="phone-number h4 fw-semibold link">0981675396</a>
+                            <div class="box-support-online">
+                                <i class="icon icon-phone"></i>
+                                <span class="br-line type-vertical"></span>
+                                <div class="sp-wrap">
+                                    <span class="text-small">Online support</span>
+                                    <a href="tel:4055550128" class="phone-number h4 fw-semibold link">(098) 167-5396</a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
                 <div class="col-xl-4 col-md-4 col-6">
-                    <a href="index.html" class="logo-site justify-content-center">
-                        <img src="{{asset('build/assets/images/logo-tamjr-sport.png')}}" alt="Logo">
+                    <a href="{{ route('client.home') }}" class="logo-site justify-content-center">
+                        <img style="width: -webkit-fill-available;" src="{{asset('build/assets/images/tamjr-sport.svg')}}" alt="Tamjr Sport Logo" class="main-logo">
                     </a>
                 </div>
                 <div class="col-xl-4 col-md-4 col-3">
@@ -63,8 +63,8 @@
                         </a>
                     </div>
                     <div class="col-xl-3 col-md-4 col-6 text-center text-xl-start">
-                        <a href="index.html" class="logo-site justify-content-center justify-content-xl-start">
-                            <img src="images/logo/logo.svg" alt="Logo">
+                        <a href="{{ route('client.home') }}" class="logo-site justify-content-center justify-content-xl-start">
+                            <img src="{{asset('build/assets/images/tamjrsport-logo.png')}}" alt="Tamjr Sport Logo" class="fixed-logo">
                         </a>
                     </div>
                     <div class="col-xl-6 d-none d-xl-block">
@@ -97,22 +97,105 @@
             </div>
         </header>
 <style>
-    .logo-site img {
-        max-height: 48px;
-        width: auto;
-        transition: max-height 0.3s;
+    .logo-site {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 0;
     }
+    
+    .logo-site img {
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+        filter: none;
+        transition: all 0.3s ease;
+        backface-visibility: hidden;
+        transform: translateZ(0);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .main-logo {
+        max-height: 100px !important;
+        min-height: 80px;
+        width: auto;
+    }
+    
+    .fixed-logo {
+        max-height: 80px !important;
+        min-height: 60px;
+        width: auto;
+    }
+    
+    .logo-site:hover img {
+        transform: scale(1.05);
+    }
+    
     .phone-number {
         font-family: 'Montserrat', 'Arial', sans-serif;
-        font-size: 1.2rem;
-        color: #ff5722;
+        font-size: 1.5rem;
+        color: black;
         letter-spacing: 1px;
         font-weight: 700;
         text-shadow: 0 1px 2px rgba(0,0,0,0.08);
         transition: color 0.3s;
     }
+    
     .phone-number:hover {
         color: #e91e63;
         text-decoration: underline;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .main-logo {
+            max-height: 90px !important;
+            min-height: 70px;
+        }
+        
+        .fixed-logo {
+            max-height: 70px !important;
+            min-height: 50px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .main-logo {
+            max-height: 80px !important;
+            min-height: 60px;
+        }
+        
+        .fixed-logo {
+            max-height: 60px !important;
+            min-height: 45px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .main-logo {
+            max-height: 70px !important;
+            min-height: 50px;
+        }
+        
+        .fixed-logo {
+            max-height: 50px !important;
+            min-height: 40px;
+        }
+    }
+    
+    /* Force logo to be sharp and clear */
+    .logo-site img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
+        image-rendering: pixelated;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
 </style> 

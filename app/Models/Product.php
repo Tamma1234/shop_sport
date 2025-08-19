@@ -12,7 +12,7 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'name', 'slug', 'sku', 'description', 'category_id', 'warehouse_id', 'tags', 'price', 'discount_price', 'price_warehouse', 'stock', 'weight', 'dimensions', 'image', 'status'
+        'name', 'slug', 'sku', 'description', 'category_id', 'warehouse_id', 'tags', 'price', 'discount_price', 'price_warehouse', 'stock', 'weight', 'dimensions', 'image', 'google_drive_id', 'status'
     ];
 
     protected $casts = [

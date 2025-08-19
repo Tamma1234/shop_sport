@@ -2,6 +2,8 @@
 
 @section('title', $product->name)
 
+<link rel="stylesheet" href="{{ asset('css/product-detail-fix.css') }}">
+
 @section('content')
 <!-- Page Title -->
 <section class="s-page-title style-2">

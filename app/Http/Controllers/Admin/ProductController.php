@@ -9,9 +9,17 @@ use App\Models\Category;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Admin\Controller;
+use App\Services\GoogleDriveService;
 
 class ProductController extends Controller
 {
+    protected $googleDriveService;
+
+    public function __construct(GoogleDriveService $googleDriveService)
+    {
+        $this->googleDriveService = $googleDriveService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -61,9 +69,18 @@ class ProductController extends Controller
     }
 
 
-    // 👇 Xử lý ảnh
+    // 👇 Xử lý ảnh - Upload lên Google Drive
     if ($request->hasFile('image')) {
-        $validated['image'] = $request->file('image')->store('uploads/products', 'public');
+        try {
+            $uploadResult = $this->googleDriveService->uploadFile(
+                $request->file('image'),
+                config('services.google.folder_id')
+            );
+            $validated['image'] = $uploadResult['url'];
+            $validated['google_drive_id'] = $uploadResult['id'];
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['image' => 'Không thể upload ảnh lên Google Drive: ' . $e->getMessage()]);
+        }
     }
 
     Product::create($validated);
@@ -118,15 +135,23 @@ class ProductController extends Controller
     if (empty($validated['sku'])) {
         $validated['sku'] = $this->generateSKU($validated['name']);
     }
-    // Xử lý cập nhật ảnh
+    // Xử lý cập nhật ảnh - Upload lên Google Drive
         if ($request->hasFile('image')) {
-            // Xoá ảnh cũ nếu có
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
-                Storage::disk('public')->delete($product->image);
+            // Xoá ảnh cũ trên Google Drive nếu có
+            if ($product->google_drive_id) {
+                $this->googleDriveService->deleteFile($product->google_drive_id);
             }
 
-            $path = $request->file('image')->store('uploads/products', 'public');
-            $validated['image'] = $path;
+            try {
+                $uploadResult = $this->googleDriveService->uploadFile(
+                    $request->file('image'),
+                    config('services.google.folder_id')
+                );
+                $validated['image'] = $uploadResult['url'];
+                $validated['google_drive_id'] = $uploadResult['id'];
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors(['image' => 'Không thể upload ảnh lên Google Drive: ' . $e->getMessage()]);
+            }
         }
 
         $product->update($validated);
@@ -138,9 +163,9 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // Xoá ảnh khỏi thư mục nếu tồn tại
-        if ($product->image && Storage::disk('public')->exists($product->image)) {
-            Storage::disk('public')->delete($product->image);
+        // Xoá ảnh khỏi Google Drive nếu tồn tại
+        if ($product->google_drive_id) {
+            $this->googleDriveService->deleteFile($product->google_drive_id);
         }
 
         $product->delete();
